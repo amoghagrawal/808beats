@@ -1,0 +1,579 @@
+<html><head><base href=".">
+<title>808 Beats - Windows 95 Edition</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=MS+Sans+Serif&display=swap');
+    
+    body {
+        font-family: 'MS Sans Serif', sans-serif;
+        background-color: #008080;
+        color: #000000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+    h1 {
+        display: none;
+    }
+    .container {
+        background-color: #c0c0c0;
+        border: 2px solid #ffffff;
+        border-right-color: #808080;
+        border-bottom-color: #808080;
+        padding: 2px;
+        box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+        max-width: 800px;
+        width: 100%;
+        margin: 0 auto;
+    }
+    .title-bar {
+        background: linear-gradient(90deg, #000080, #1084d0);
+        color: #ffffff;
+        padding: 3px 2px 3px 3px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .title-bar-text {
+        font-size: 12px;
+    }
+    .title-bar-controls {
+        display: flex;
+    }
+    .title-bar-controls button {
+        width: 16px;
+        height: 14px;
+        border: 1px solid #ffffff;
+        background-color: #c0c0c0;
+        margin-left: 2px;
+        font-size: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #000000;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(16, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: 2px;
+        padding: 10px;
+        background-color: #ffffff;
+        border: 2px solid #808080;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+    }
+    .cell {
+        aspect-ratio: 1;
+        background-color: #c0c0c0;
+        border: 2px solid #ffffff;
+        border-right-color: #808080;
+        border-bottom-color: #808080;
+        cursor: pointer;
+    }
+    .cell.active {
+        background-color: #000080;
+    }
+    .control-panel {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 10px;
+        margin-top: 10px;
+    }
+    .control-panel button, #instructionsToggle {
+        padding: 5px 10px;
+        background-color: #c0c0c0;
+        border: 2px solid #ffffff;
+        border-right-color: #808080;
+        border-bottom-color: #808080;
+        color: #000000;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: 'MS Sans Serif', sans-serif;
+    }
+    .control-panel button:active, #instructionsToggle:active {
+        border: 2px solid #808080;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+    }
+    .control-panel input {
+        width: 50px;
+        text-align: center;
+        background-color: #ffffff;
+        border: 2px solid #808080;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+        font-size: 12px;
+        padding: 2px;
+        font-family: 'MS Sans Serif', sans-serif;
+    }
+    .control-panel label {
+        margin-right: 5px;
+        font-size: 12px;
+    }
+    .legend {
+        display: flex;
+        justify-content: space-around;
+        background-color: #ffffff;
+        padding: 5px;
+        border: 2px solid #808080;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+        margin-bottom: 10px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+    }
+    .legend-color {
+        width: 12px;
+        height: 12px;
+        margin-right: 5px;
+        border: 1px solid #000000;
+    }
+    .controls-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-top: 5px;
+    }
+    .volume-controls, .sample-selector {
+        display: flex;
+        flex-direction: column;
+        width: 48%;
+        background-color: #c0c0c0;
+        padding: 5px;
+        border: 2px solid #ffffff;
+        border-right-color: #808080;
+        border-bottom-color: #808080;
+    }
+    .volume-control, .sample-selector select {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+    .volume-control input[type="range"] {
+        -webkit-appearance: none;
+        width: 100px;
+        height: 20px;
+        background: #c0c0c0;
+        outline: none;
+        border: 2px solid #808080;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+    }
+    .volume-control input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 10px;
+        height: 20px;
+        background: #c0c0c0;
+        cursor: pointer;
+        border: 2px solid #ffffff;
+        border-right-color: #808080;
+        border-bottom-color: #808080;
+    }
+    .sample-control-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .preview-button {
+        padding: 2px 5px;
+        background-color: #c0c0c0;
+        border: 2px solid #ffffff;
+        border-right-color: #808080;
+        border-bottom-color: #808080;
+        color: #000000;
+        font-size: 10px;
+        cursor: pointer;
+        font-family: 'MS Sans Serif', sans-serif;
+        min-width: 20px;
+    }
+    .preview-button:active {
+        border: 2px solid #808080;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+    }
+    .sample-selector select {
+        width: 80px; 
+    }
+    .instructions {
+        background-color: #ffffff;
+        padding: 10px;
+        margin-top: 20px;
+        border: 2px solid #808080;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+        font-size: 12px;
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 100;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    .instructions h2 {
+        font-size: 14px;
+        margin-top: 0;
+    }
+    .instructions ol {
+        padding-left: 20px;
+        margin: 0;
+    }
+    .instructions li {
+        margin-bottom: 5px;
+    }
+    #instructionsToggle {
+        margin: 5px 0;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="title-bar">
+        <div class="title-bar-text">808 Beats - Windows 95 Edition</div>
+        <div class="title-bar-controls">
+            <button aria-label="Minimize">-</button>
+            <button aria-label="Maximize">□</button>
+            <button aria-label="Close">×</button>
+        </div>
+    </div>
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #ff0000;"></div>
+            <span>Kick</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #00ff00;"></div>
+            <span>Snare</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #0000ff;"></div>
+            <span>Hi-hat</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #ff00ff;"></div>
+            <span>Clap</span>
+        </div>
+    </div>
+    <div class="grid"></div>
+    <div class="controls-container">
+        <div class="sample-selector">
+            <div class="sample-control">
+                <label for="kickSample">Kick:</label>
+                <div class="sample-control-row">
+                    <select id="kickSample">
+                        <option value="kick1">Kick 1</option>
+                        <option value="kick2">Kick 2</option>
+                        <option value="kick3">Kick 3</option>
+                    </select>
+                    <button class="preview-button" data-instrument="kick">▶</button>
+                </div>
+            </div>
+            <div class="sample-control">
+                <label for="snareSample">Snare:</label>
+                <div class="sample-control-row">
+                    <select id="snareSample">
+                        <option value="snare1">Snare 1</option>
+                        <option value="snare2">Snare 2</option>
+                        <option value="snare3">Snare 3</option>
+                    </select>
+                    <button class="preview-button" data-instrument="snare">▶</button>
+                </div>
+            </div>
+            <div class="sample-control">
+                <label for="hihatSample">Hi-hat:</label>
+                <div class="sample-control-row">
+                    <select id="hihatSample">
+                        <option value="hihat1">Hi-hat 1</option>
+                        <option value="hihat2">Hi-hat 2</option>
+                        <option value="hihat3">Hi-hat 3</option>
+                    </select>
+                    <button class="preview-button" data-instrument="hihat">▶</button>
+                </div>
+            </div>
+            <div class="sample-control">
+                <label for="clapSample">Clap:</label>
+                <div class="sample-control-row">
+                    <select id="clapSample">
+                        <option value="clap1">Clap 1</option>
+                        <option value="clap2">Clap 2</option>
+                        <option value="clap3">Clap 3</option>
+                    </select>
+                    <button class="preview-button" data-instrument="clap">▶</button>
+                </div>
+            </div>
+        </div>
+        <div class="volume-controls">
+            <div class="volume-control">
+                <label for="kickVolume">Kick:</label>
+                <input type="range" id="kickVolume" min="0" max="1" step="0.1" value="1">
+            </div>
+            <div class="volume-control">
+                <label for="snareVolume">Snare:</label>
+                <input type="range" id="snareVolume" min="0" max="1" step="0.1" value="1">
+            </div>
+            <div class="volume-control">
+                <label for="hihatVolume">Hi-hat:</label>
+                <input type="range" id="hihatVolume" min="0" max="1" step="0.1" value="1">
+            </div>
+            <div class="volume-control">
+                <label for="clapVolume">Clap:</label>
+                <input type="range" id="clapVolume" min="0" max="1" step="0.1" value="1">
+            </div>
+        </div>
+    </div>
+    <div class="control-panel">
+        <button class="play-button">Play</button>
+        <div>
+            <label for="bpm">BPM:</label>
+            <input type="number" id="bpm" min="60" max="200" value="120">
+        </div>
+        <button class="clear-button">Clear</button>
+    </div>
+</div>
+<button id="instructionsToggle">Show Instructions</button>
+<div class="instructions">
+    <h2>How to Use 808 Beats - Windows 95 Edition</h2>
+    <ol>
+        <li><strong>Grid:</strong> Each row is a different drum sound. Each column is a step in the 16-step sequence.</li>
+        <li><strong>Creating Patterns:</strong> Click cells to activate/deactivate sounds. Active cells turn blue.</li>
+        <li><strong>Color Coding:</strong> Kick (Red), Snare (Green), Hi-hat (Blue), Clap (Magenta).</li>
+        <li><strong>Playing:</strong> Click "Play" to start/stop the sequence.</li>
+        <li><strong>Tempo:</strong> Change BPM (60-200) using the number input.</li>
+        <li><strong>Clearing:</strong> Use "Clear" to reset all cells.</li>
+        <li><strong>Live Editing:</strong> Edit while playing for real-time changes.</li>
+        <li><strong>Volume:</strong> Adjust individual instrument volumes with sliders.</li>
+        <li><strong>Samples:</strong> Choose different samples for each instrument.</li>
+        <li><strong>Experiment:</strong> Try different patterns and have fun!</li>
+    </ol>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.40/Tone.min.js"></script>
+<script>
+    const container = document.querySelector('.container');
+const grid = document.querySelector('.grid');
+const playButton = document.querySelector('.play-button');
+const bpmInput = document.querySelector('#bpm');
+const clearButton = document.querySelector('.clear-button');
+const instructionsToggle = document.querySelector('#instructionsToggle');
+const instructions = document.querySelector('.instructions');
+const steps = 16;
+const rows = 4;
+const cells = [];
+let currentStep = 0;
+let isPlaying = false;
+
+const kickSampleSelector = document.getElementById('kickSample');
+const snareSampleSelector = document.getElementById('snareSample');
+const hihatSampleSelector = document.getElementById('hihatSample');
+const clapSampleSelector = document.getElementById('clapSample');
+
+const kickSamples = {
+    kick1: new Tone.MembraneSynth().toDestination(),
+    kick2: new Tone.MembraneSynth({ pitchDecay: 0.05, octaves: 4, oscillator: { type: 'sine' } }).toDestination(),
+    kick3: new Tone.MembraneSynth({ pitchDecay: 0.05, octaves: 10, oscillator: { type: 'triangle' } }).toDestination()
+};
+
+const snareSamples = {
+    snare1: new Tone.NoiseSynth({
+        noise: { type: 'white' },
+        envelope: { attack: 0.005, decay: 0.1, sustain: 0 }
+    }).toDestination(),
+    snare2: new Tone.NoiseSynth({
+        noise: { type: 'pink' },
+        envelope: { attack: 0.001, decay: 0.2, sustain: 0 }
+    }).toDestination(),
+    snare3: new Tone.NoiseSynth({
+        noise: { type: 'brown' },
+        envelope: { attack: 0.01, decay: 0.15, sustain: 0 }
+    }).toDestination()
+};
+
+const hihatSamples = {
+    hihat1: new Tone.MetalSynth({
+        frequency: 200,
+        envelope: { attack: 0.001, decay: 0.1, release: 0.01 },
+        harmonicity: 5.1,
+        modulationIndex: 32,
+        resonance: 4000,
+        octaves: 1
+    }).toDestination(),
+    hihat2: new Tone.MetalSynth({
+        frequency: 300,
+        envelope: { attack: 0.001, decay: 0.05, release: 0.01 },
+        harmonicity: 4,
+        modulationIndex: 40,
+        resonance: 5000,
+        octaves: 1.5
+    }).toDestination(),
+    hihat3: new Tone.MetalSynth({
+        frequency: 400,
+        envelope: { attack: 0.001, decay: 0.02, release: 0.01 },
+        harmonicity: 3,
+        modulationIndex: 50,
+        resonance: 6000,
+        octaves: 2
+    }).toDestination()
+};
+
+const clapSamples = {
+    clap1: new Tone.NoiseSynth({
+        noise: { type: 'pink' },
+        envelope: { attack: 0.001, decay: 0.3, sustain: 0 }
+    }).connect(new Tone.Filter(1000, "bandpass").toDestination()),
+    clap2: new Tone.NoiseSynth({
+        noise: { type: 'white' },
+        envelope: { attack: 0.001, decay: 0.2, sustain: 0 }
+    }).connect(new Tone.Filter(1500, "bandpass").toDestination()),
+    clap3: new Tone.NoiseSynth({
+        noise: { type: 'brown' },
+        envelope: { attack: 0.001, decay: 0.4, sustain: 0 }
+    }).connect(new Tone.Filter(800, "bandpass").toDestination())
+};
+
+const instruments = ['kick', 'snare', 'hihat', 'clap'];
+const colors = ['#ff0000', '#00ff00', '#0000ff', '#ff00ff'];
+
+// Volume controls
+const kickVolumeControl = document.getElementById('kickVolume');
+const snareVolumeControl = document.getElementById('snareVolume');
+const hihatVolumeControl = document.getElementById('hihatVolume');
+const clapVolumeControl = document.getElementById('clapVolume');
+
+kickVolumeControl.addEventListener('input', (e) => {
+    Object.values(kickSamples).forEach(sample => sample.volume.value = Tone.gainToDb(e.target.value));
+});
+snareVolumeControl.addEventListener('input', (e) => {
+    Object.values(snareSamples).forEach(sample => sample.volume.value = Tone.gainToDb(e.target.value));
+});
+hihatVolumeControl.addEventListener('input', (e) => {
+    Object.values(hihatSamples).forEach(sample => sample.volume.value = Tone.gainToDb(e.target.value));
+});
+clapVolumeControl.addEventListener('input', (e) => {
+    Object.values(clapSamples).forEach(sample => sample.volume.value = Tone.gainToDb(e.target.value));
+});
+
+for (let i = 0; i < rows * steps; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    const row = Math.floor(i / steps);
+    const col = i % steps;
+    cell.dataset.row = row;
+    cell.dataset.col = col;
+    cell.addEventListener('click', () => {
+        cell.classList.toggle('active');
+        if (cell.classList.contains('active')) {
+            cell.style.backgroundColor = colors[row];
+        } else {
+            cell.style.backgroundColor = '';
+        }
+    });
+    grid.appendChild(cell);
+    cells.push(cell);
+}
+
+function step(time) {
+    for (let row = 0; row < rows; row++) {
+        const cell = cells[currentStep + row * steps];
+        if (cell.classList.contains('active')) {
+            switch (instruments[row]) {
+                case 'kick':
+                    kickSamples[kickSampleSelector.value].triggerAttackRelease('C1', '8n', time);
+                    break;
+                case 'snare':
+                    snareSamples[snareSampleSelector.value].triggerAttackRelease('8n', time);
+                    break;
+                case 'hihat':
+                    hihatSamples[hihatSampleSelector.value].triggerAttackRelease('8n', time);
+                    break;
+                case 'clap':
+                    clapSamples[clapSampleSelector.value].triggerAttackRelease('8n', time);
+                    break;
+            }
+        }
+        cell.style.border = '2px solid #000000';
+        setTimeout(() => cell.style.border = '', 100);
+    }
+
+    currentStep = (currentStep + 1) % steps;
+}
+
+playButton.addEventListener('click', () => {
+    if (isPlaying) {
+        Tone.Transport.stop();
+        playButton.textContent = 'Play';
+        isPlaying = false;
+    } else {
+        Tone.start();
+        const bpm = bpmInput.value;
+        Tone.Transport.bpm.value = bpm;
+        Tone.Transport.scheduleRepeat((time) => {
+            step(time);
+        }, '16n');
+        Tone.Transport.start();
+        playButton.textContent = 'Stop';
+        isPlaying = true;
+    }
+});
+
+clearButton.addEventListener('click', () => {
+    cells.forEach(cell => {
+        cell.classList.remove('active');
+        cell.style.backgroundColor = '';
+    });
+    currentStep = 0;
+});
+
+instructionsToggle.addEventListener('click', () => {
+    if (instructions.style.display === 'none') {
+        instructions.style.display = 'block';
+        instructionsToggle.textContent = 'Hide Instructions';
+    } else {
+        instructions.style.display = 'none';
+        instructionsToggle.textContent = 'Show Instructions';
+    }
+});
+
+document.querySelectorAll('.preview-button').forEach(button => {
+    button.addEventListener('click', async () => {
+        const instrument = button.dataset.instrument;
+        const selectedSample = document.getElementById(`${instrument}Sample`).value;
+        
+        await Tone.start();
+        
+        switch(instrument) {
+            case 'kick':
+                kickSamples[selectedSample].triggerAttackRelease('C1', '8n');
+                break;
+            case 'snare':
+                snareSamples[selectedSample].triggerAttackRelease('8n');
+                break;
+            case 'hihat':
+                hihatSamples[selectedSample].triggerAttackRelease('8n');
+                break;
+            case 'clap':
+                clapSamples[selectedSample].triggerAttackRelease('8n');
+                break;
+        }
+    });
+});
+</script>
+</body></html>
